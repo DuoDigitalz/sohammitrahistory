@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Colonial America Drill</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IM+Fell+English:ital@0;1&display=swap">
+<style>
+/* Layout: one narrow column, a tab strip on top, one drill at a time. Colonial printed-page type for terms, plain sans for answers. */
+:root {
+  --bg: #ECEFF0;
+  --surface: #FFFFFF;
+  --ink: #18222D;
+  --muted: #566370;
+  --line: #C9D1D6;
+  --chip: #DFE5E8;
+  --accent: #1D4E6B;
+  --accent-ink: #FFFFFF;
+  --good: #276E5D;
+  --good-bg: #DCEEE8;
+  --bad: #A93A2A;
+  --bad-bg: #F5DDD8;
+  --f-display: "IM Fell English", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F171F; --surface: #17222D; --ink: #E6ECEF; --muted: #93A1AC; --line: #2B3A48; --chip: #213140;
+    --accent: #7DBBDD; --accent-ink: #0B1720; --good: #6CCDB3; --good-bg: #16352D; --bad: #F09384; --bad-bg: #3A201C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F171F; --surface: #17222D; --ink: #E6ECEF; --muted: #93A1AC; --line: #2B3A48; --chip: #213140;
+  --accent: #7DBBDD; --accent-ink: #0B1720; --good: #6CCDB3; --good-bg: #16352D; --bad: #F09384; --bad-bg: #3A201C;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 56px;
+}
+.wrap { max-width: 760px; margin: 0 auto; }
+header .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(30px, 7vw, 44px); line-height: 1.1; margin: 4px 0 2px; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); }
+
+.tabs { display: flex; gap: 4px; overflow-x: auto; margin: 18px 0 18px; border-bottom: 1px solid var(--line); }
+.tabs button {
+  flex: 0 0 auto; background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted);
+  font: 500 15px var(--f-body); padding: 10px 14px 9px; cursor: pointer;
+}
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+.chip {
+  background: var(--chip); color: var(--ink); border: 1px solid transparent; border-radius: 999px;
+  font: 500 14px var(--f-body); padding: 6px 13px; cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.spacer { flex: 1 1 auto; }
+.btn {
+  font: 600 15px var(--f-body); padding: 11px 18px; border-radius: 6px; cursor: pointer;
+  border: 1.5px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+}
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+.row > .btn { flex: 1 1 140px; }
+
+.meter { height: 6px; background: var(--chip); border-radius: 3px; overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--good); width: 0; }
+.meta { display: flex; justify-content: space-between; gap: 12px; font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); margin: 6px 0 14px; }
+
+.card {
+  width: 100%; min-height: 270px; text-align: left; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 8px; padding: 22px 22px 20px; cursor: pointer;
+  display: flex; flex-direction: column; justify-content: center; gap: 12px; margin-bottom: 14px;
+}
+.card .tag { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.card .front { font-family: var(--f-display); font-size: clamp(28px, 6.5vw, 40px); line-height: 1.15; text-wrap: balance; }
+.card .back { font-size: 18px; line-height: 1.5; }
+.card .hint { font-size: 13px; color: var(--muted); }
+.card.flipped { border-color: var(--accent); }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; margin-bottom: 14px; }
+.panel h2, .section h2 { font-family: var(--f-display); font-weight: 400; font-size: 26px; line-height: 1.15; margin: 0 0 8px; }
+.panel p { margin: 0 0 10px; }
+.sub { color: var(--muted); font-size: 14.5px; }
+
+.q { font-family: var(--f-display); font-size: clamp(22px, 5vw, 28px); line-height: 1.25; margin: 6px 0 14px; text-wrap: balance; }
+.opts { display: grid; gap: 8px; margin-bottom: 14px; }
+.opt {
+  text-align: left; font: 400 16px/1.4 var(--f-body); color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 6px; padding: 12px 14px; cursor: pointer;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt.right { background: var(--good-bg); border-color: var(--good); }
+.opt.wrong { background: var(--bad-bg); border-color: var(--bad); }
+.opt:disabled { cursor: default; color: var(--ink); }
+.fb { font-size: 15px; margin: 0 0 14px; }
+.fb b.ok { color: var(--good); } .fb b.no { color: var(--bad); }
+
+.pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.ev {
+  font: 500 15px var(--f-body); background: var(--surface); color: var(--ink); border: 1.5px solid var(--line);
+  border-radius: 6px; padding: 9px 12px; cursor: pointer; text-align: left;
+}
+.ev:hover { border-color: var(--accent); }
+ol.order { list-style: none; counter-reset: n; padding: 0; margin: 0 0 14px; display: grid; gap: 6px; }
+ol.order li {
+  counter-increment: n; display: flex; gap: 10px; align-items: baseline; background: var(--surface);
+  border: 1.5px dashed var(--line); border-radius: 6px; padding: 8px 12px; min-height: 42px;
+}
+ol.order li::before { content: counter(n); font-family: var(--f-mono); font-size: 13px; color: var(--muted); width: 1.6em; }
+ol.order li.filled { border-style: solid; }
+ol.order li.filled button { all: unset; cursor: pointer; flex: 1; }
+ol.order li.ok { background: var(--good-bg); border-color: var(--good); }
+ol.order li.no { background: var(--bad-bg); border-color: var(--bad); }
+.yr { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
+.key { margin: 0 0 14px; padding-left: 0; list-style: none; display: grid; gap: 4px; font-size: 15px; }
+.key li { display: flex; gap: 10px; }
+.key .yr { min-width: 8.5em; }
+
+.dec { border-top: 1px solid var(--line); padding: 14px 0; }
+.dec:first-of-type { border-top: 0; }
+.dec p { margin: 0 0 10px; }
+.dec .fbk { font-size: 14.5px; margin-top: 8px; }
+
+.ident { border-top: 1px solid var(--line); padding: 16px 0; }
+.ident:first-of-type { border-top: 0; }
+.ident h3 { font-family: var(--f-display); font-weight: 400; font-size: 24px; margin: 0 0 6px; }
+textarea {
+  width: 100%; min-height: 76px; resize: vertical; font: 400 16px/1.45 var(--f-body); color: var(--ink);
+  background: var(--bg); border: 1.5px solid var(--line); border-radius: 6px; padding: 10px 12px; margin: 4px 0 8px;
+}
+.model { background: var(--good-bg); border-left: 4px solid var(--good); padding: 10px 12px; border-radius: 0 6px 6px 0; margin-top: 8px; }
+
+.cat { margin: 18px 0 8px; }
+.cat h3 { font-family: var(--f-display); font-weight: 400; font-size: 22px; margin: 0 0 8px; }
+.mask {
+  display: flex; gap: 10px; width: 100%; text-align: left; font: 400 15.5px/1.45 var(--f-body); color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; margin-bottom: 6px; cursor: pointer;
+}
+.mask .n { font-family: var(--f-mono); font-size: 13px; color: var(--muted); min-width: 1.6em; padding-top: 2px; }
+.mask .t { flex: 1; min-width: 0; filter: blur(7px); user-select: none; transition: filter .15s; }
+.mask.on .t { filter: none; user-select: auto; }
+.thesis.mask .t { font-size: 16px; }
+@media (prefers-reduced-motion: reduce) { .mask .t { transition: none; } }
+.lcards { display: grid; gap: 10px; margin: 12px 0 18px; }
+.lcard {
+  display: grid; gap: 2px; text-align: left; width: 100%; font: inherit; color: var(--ink); cursor: pointer;
+  background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px; padding: 13px 14px;
+}
+.lcard:hover { border-color: var(--accent); }
+.lcard .lt { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.lcard b { font-family: var(--f-display); font-weight: 400; font-size: 22px; line-height: 1.2; }
+.lcard .ls { color: var(--muted); font-size: 14px; }
+.lcard .st { font-family: var(--f-mono); font-size: 12px; color: var(--good); }
+.pips { display: inline-flex; gap: 5px; margin-top: 6px; }
+.pip { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--accent); }
+.pip.l1 { background: var(--accent); opacity: .4; }
+.pip.l2 { background: var(--accent); opacity: .7; }
+.pip.l3 { background: var(--accent); }
+.steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 16px; }
+.steps span { font-family: var(--f-mono); font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--chip); color: var(--muted); }
+.steps .on { background: var(--accent); color: var(--accent-ink); }
+.steps .past { color: var(--good); }
+.strip { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.strip span { font-family: var(--f-mono); font-size: 13px; padding: 4px 9px; border-radius: 6px; border: 1.5px solid var(--line); color: var(--muted); }
+.strip .cur { border-color: var(--accent); background: var(--surface); color: var(--ink); }
+.study { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin-bottom: 14px; }
+.yearbig { font-family: var(--f-mono); font-weight: 500; font-size: clamp(38px, 11vw, 60px); line-height: 1; color: var(--accent); overflow-wrap: anywhere; }
+.study h2 { font-family: var(--f-display); font-weight: 400; font-size: clamp(24px, 6vw, 32px); line-height: 1.15; margin: 8px 0 4px; text-wrap: balance; }
+.lab { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 14px 0 2px; }
+.study p { margin: 0; }
+.hook { background: var(--chip); border-left: 4px solid var(--accent); border-radius: 0 6px 6px 0; padding: 10px 12px; margin-top: 14px; }
+.hook .lab { margin-top: 0; }
+.note { font-size: 13.5px; color: var(--muted); font-style: italic; margin-top: 10px; }
+.yr-in { font: 500 24px var(--f-mono); width: 100%; max-width: 220px; padding: 10px 12px; color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 6px; margin-bottom: 12px; }
+.cheat { columns: 1; margin: 8px 0 0; padding: 0; list-style: none; font-size: 15px; display: grid; gap: 3px; }
+.cheat li { display: flex; gap: 10px; }
+.cheat .yr { min-width: 8.2em; }
+.done { text-align: center; padding: 26px 8px; }
+.done .big { font-family: var(--f-display); font-size: 44px; line-height: 1; margin: 0 0 6px; }
+.missed { text-align: left; margin: 14px 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.missed li { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; font-size: 15px; }
+.missed b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 19px; }
+html { color-scheme: light; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">US History I Honors</div>
+    <h1>Colonial America Drill</h1>
+    <p>Chapters 2 and 3, 1492 to 1718. Learn the dates first, then drill them.</p>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main id="view"></main>
+</div>
+
+<script>
+/* ---------- helpers ---------- */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ---------- data ---------- */
+const CARDS = [
+ // chapter 2
+ [2,'Person','Christopher Columbus','Landed on San Salvador (1492) thinking he had reached Asia and called the Taino "Indians." Killed Tainos in retribution (1494) after his men were killed on Hispaniola. A new governor sent him home in chains.'],
+ [2,'Term','Taino','Friendly, unarmed Caribbean people Columbus met. About 1 million lived on Hispaniola; only about 1,000 were left by the early 1500s, mostly from disease.'],
+ [2,'Term','Treaty of Tordesillas (1494)','The Pope divided the New World between Spain and Portugal. This is why Brazil speaks Portuguese and the rest of South America speaks Spanish.'],
+ [2,'Person','Amerigo Vespucci','Italian merchant who sailed Brazil\'s coast and decided the land was a new continent, not Asia. "America" was named for him on a 1507 German map.'],
+ [2,'Person','Nicolas de Ovando','Spanish governor who in 1503 invited the caciques (district chiefs) to a "friendly" meeting, locked the doors, and burned the building.'],
+ [2,'Term','Columbian Exchange','The interchange of diseases, plants, animals, and cultures between the Old and New Worlds after 1492. Corn, beans, potatoes went east; wheat, cattle, pigs, horses went west.'],
+ [2,'Term','Silk Road','Overland trade route between Venice and China. Atlantic sea routes later made Spain and Portugal the key links to Asia, replacing Genoa and Venice.'],
+ [2,'Person','Vasco Nunez de Balboa','First European to see the Pacific Ocean (1513, Isthmus of Panama).'],
+ [2,'Person','Ferdinand Magellan','Led the 1519 attempt to sail around the world. He was killed on the way, but his remaining crew finished the trip in 1522.'],
+ [2,'Person','Hernan Cortes','Conquered the Aztecs (1519-21). Took Tenochtitlan, renamed it Mexico City, and retook it in 1521 with help from non-Aztec tribes tired of Aztec rule.'],
+ [2,'Term','New Spain and the viceroy','Spain\'s empire in Mexico and Central America, ruled from Mexico City by a viceroy, the king\'s representative.'],
+ [2,'Person','Francisco Pizarro','Defeated the Inca emperor in 1532. The empire became the Viceroyalty of Peru, which produced gold using about 45,000 enslaved miners.'],
+ [2,'Term','Why Spain conquered so fast','Native allies, Spanish dishonesty about friendship, superior technology, and smallpox. The Aztecs lost up to half their people, and an Inca emperor died of it before Pizarro arrived.'],
+ [2,'Person','Bartolome de Las Casas','Priest who gave up his encomienda in 1514 and preached against the oppression of Indians. His writing documents conquistador cruelty.'],
+ [2,'Term','Encomienda','A large ranch or estate granted to a Spaniard and worked by Indian slaves.'],
+ [2,'Term','Conquistadores','The Spanish conquerors of the Americas.'],
+ [2,'Person','Martin Luther','German monk whose 95 Theses began the Protestant Reformation. He challenged bishops-only Bible interpretation and salvation through "good works."'],
+ [2,'Term','Nation-state','An independent nation, replacing the old ideal of a Europe united by one religion and government. Boundaries often matched religion.'],
+ [2,'Term','Peace of Augsburg (1555) and Treaty of Westphalia (1648)','Treaties that let the ruler\'s faith decide the people\'s faith, tying national unity to religious uniformity.'],
+ [2,'Person','Juan Ponce de Leon','Founded the first Spanish colony in Puerto Rico and led expeditions to Florida (1513, 1521), supposedly seeking a "fountain of youth." Died from a poisoned arrow.'],
+ [2,'Person','Esteban','African Muslim who survived the Narvaez expedition, walked about 8 years to Mexico City, then scouted for de Niza and was killed by the Zuni.'],
+ [2,'Person','Cabeza de Vaca','Narvaez expedition survivor. Wrote that Natives saw the survivors as different from earlier Spaniards because they came "naked and barefoot" and cured the sick.'],
+ [2,'Term','Seven Cities of Cibola','Legend of seven rich cities founded by bishops fleeing Muslim Spain. De Niza searched for them in 1539 and Coronado found none.'],
+ [2,'Person','Francisco Vazquez de Coronado','Led a large 1540-42 expedition through Arizona, New Mexico, Texas, Oklahoma, and Kansas. Found no gold; Pueblos steered him away with tales of rich cities.'],
+ [2,'Person','Hernando de Soto','Led a 1539 expedition of 500-600 Spaniards through Florida, Georgia, and the Carolinas. Took prisoners and killed the generous. Died in 1542 and was buried in the Mississippi River.'],
+ [2,'Person','Juan Rodriguez Cabrillo','Explored the Pacific coast for Spain (1542-43) as far as the Russian River in northern California.'],
+ [2,'Place','St. Augustine (1565)','Founded by Menendez de Aviles. The oldest city of European origin in the U.S. Spain claimed all land north and west of it.'],
+ [2,'Place','Fort Caroline (1564)','French Protestant colony in Florida. Menendez de Aviles destroyed it in 1565 and killed the survivors of the French rescue fleet.'],
+ [2,'Term','Primogeniture','Land passes whole to the oldest son, so younger sons became soldiers or priests. Many sought wealth through conquest.'],
+ [2,'Person','Juan de Onate','Claimed New Mexico for Spain (1598). Burned Acoma (1,000 killed), hanged Jumano chiefs, and was recalled in 1609. Santa Fe then became the capital.'],
+ [2,'Person','Giovanni da Verrazano','Italian exploring for France (1524). First European to explore New York Harbor; concluded a continent blocked the way to Asia.'],
+ [2,'Person','Jacques Cartier','Explored the St. Lawrence for France starting in 1534 and reached the sites of Quebec and Montreal. Lost a quarter of his crew when the river froze.'],
+ [2,'Person','John Cabot','Sailed for Henry VII in 1497 and reached Newfoundland. His first voyage became the basis of English claims in North America.'],
+ [2,'Person','Henry VIII','Broke with the Pope after being refused a divorce. Parliament made him "Supreme Head" of the Church of England.'],
+ [2,'Term','Act of Uniformity (1559)','Elizabeth I became "Supreme Governor" of the Church of England. Worship followed the Book of Common Prayer and weekly attendance was required.'],
+ [2,'Term','Anglicans, Puritans, Catholics','England\'s three religious groups by 1547: the majority Anglicans, Puritans who wanted to "purify" the church, and Catholics who rejected Henry\'s break with the Pope.'],
+ [2,'Event','Spanish Armada (1588)','Spain\'s invasion fleet, destroyed by storms and the English navy. It linked Protestantism with English patriotism.'],
+ [2,'Person','Francis Drake','English privateer who raided Spanish ships (keeping 4/5 of the prizes), sailed up California\'s coast, and circled the globe, returning in 1580.'],
+ [2,'Person','Walter Raleigh','Authorized in 1584 to settle North America. His Roanoke colonies (1585, 1587) failed; Virginia Dare was born there; the colony was found abandoned in 1590.'],
+ // chapter 3
+ [3,'Term','Virginia Company','Investors who funded Jamestown (1607) hoping for raw materials and a passage to China. Bankrupted after 1622; Virginia became a royal colony in 1624.'],
+ [3,'Place','Jamestown (1607)','Founded by 105 men and named for King James I. Bad water, drought, and infighting left only 38 alive by 1608. Built on Paspahegh land.'],
+ [3,'Person','Powhatan','Ruled about 30 Algonquian tribes (13,000-15,000 people) "like an emperor." Traded with the English to strengthen himself against rival tribes.'],
+ [3,'Person','John Smith','Jamestown governor in 1608 who ruled "he who does not work, does not eat." Credited himself with saving the colony and left in 1609.'],
+ [3,'Person','Pocahontas','Powhatan\'s daughter. In Smith\'s story she saved him from execution (historians think Powhatan staged it). Later married John Rolfe.'],
+ [3,'Event','Starving Time (1609-10)','Winter when Jamestown nearly died of starvation and disease. Settlers left in spring 1610 but met De La Warr\'s supply fleet and stayed.'],
+ [3,'Person','Opechancanough','Powhatan\'s brother. His 1622 attack killed about 300 of 1,200 settlers and helped bankrupt the Virginia Company.'],
+ [3,'Term','Tobacco','The cash crop that saved Virginia. King James hated it but profited from a royal monopoly. It created a huge demand for workers.'],
+ [3,'Term','Hakluyt\'s Pamphlet (1585)','Richard Hakluyt the elder\'s argument for English settlement: convert Natives to Protestantism, make a profit, and build a military base against Spain.'],
+ [3,'Event','Africans arrive in Jamestown (1619)','About 20 Africans arrived. Their status was unclear (maybe indentured), and they worked alongside English and Irish servants.'],
+ [3,'Term','Indentured servants','Workers bound for a set term. Most died before finishing until the 1640s. Phased out after Bacon\'s Rebellion in favor of enslaved labor.'],
+ [3,'Person','Anthony Johnson','Sold as a slave in Jamestown (1621), won his freedom, and owned a 250-acre farm and a slave. By the 1700s no one could repeat this.'],
+ [3,'Term','Puritans vs. Separatists','Puritans wanted to purify the Church of England from within. Separatists (the Pilgrims) wanted to leave and form their own churches.'],
+ [3,'Event','Mayflower Compact (1620)','Agreement signed on the ship to govern themselves after landing north of their grant. Seen as an early step toward government by consent.'],
+ [3,'Place','Plymouth (1620)','Second permanent English colony. 102 passengers (half "Saints," half "Strangers"). Half died the first winter. The site was empty because disease had wiped out the Indians there.'],
+ [3,'Person','Samoset','Native of Maine who walked into Plymouth in 1621 and said "Welcome, Englishmen!" Sent by Massasoit.'],
+ [3,'Person','Massasoit','Wampanoag leader whose agreement with Plymouth brought 54 years of peace. His people brought deer to the 1621 harvest feast.'],
+ [3,'Person','Squanto','Translator once captured by English explorers and taken to London. Taught Plymouth to catch eels and to fertilize corn with herring.'],
+ [3,'Person','William Bradford','Plymouth governor and historian (Of Plymouth Plantation). Announced the 1621 harvest feast now called the first Thanksgiving.'],
+ [3,'Person','John Winthrop','First governor of Massachusetts Bay (1630). "City upon a hill": a Christian commonwealth as a model for England.'],
+ [3,'Event','Great Migration','About 20,000 Puritans came to Massachusetts in the 1630s. The colony soon had more people than Plymouth and Jamestown combined.'],
+ [3,'Term','Great and General Court','Massachusetts Bay\'s governing body (still the name of the state legislature). Annual elections, but only church members in good standing could vote.'],
+ [3,'Term','Massachusetts school laws','Harvard (1636) to train ministers, Boston Latin, and the 1647 law requiring every township to have a school. Puritans needed everyone to read the Bible.'],
+ [3,'Event','Fundamental Orders of Connecticut (1639)','Hartford colony\'s formal government. More men could vote than in Massachusetts. Called the first written constitution in America (disputed).'],
+ [3,'Person','Roger Williams','Convicted of "erroneous" opinions (1635). Founded Providence (Rhode Island) on religious toleration and paid the Indians for the land.'],
+ [3,'Person','Anne Hutchinson','Claimed direct revelations from God. Exiled to Rhode Island, then killed by Indians in Dutch New Amsterdam (1643).'],
+ [3,'Term','Halfway Covenant (1662)','Let baptized adults have their own children baptized even without full church membership, as fewer people experienced conversion.'],
+ [3,'Term','Proprietary colony','A colony owned by one person and his heirs, passed down in the family. Maryland (the model), Pennsylvania, Carolina, New Jersey, Georgia.'],
+ [3,'Person','George and Cecil Calvert','First and second Lords Baltimore. George (a Catholic) wanted Maryland as a haven for Catholics; Cecil developed the colony.'],
+ [3,'Event','Maryland toleration (1649)','Freedom of worship for Christians who accepted the divinity of Christ, to attract more settlers than Catholics alone.'],
+ [3,'Term','Headright system','Land per settler: 100 acres, plus 100 for each additional adult and 50 for each child. Used in Virginia and Maryland; it fed the demand for labor.'],
+ [3,'Event','Maryland slave laws (1661)','First colony to formalize slavery. Status was inherited from the mother, and slavery was for life.'],
+ [3,'Place','New Amsterdam (1626)','Dutch settlement on Manhattan. Religiously diverse and home to the most enslaved Africans in North America in the 1600s. England took it in 1664.'],
+ [3,'Term','Patroons','Wealthy Dutch given huge Hudson River tracts if they settled at least 50 people. They ran them as private fiefdoms.'],
+ [3,'Person','Peter Stuyvesant','Long-time Dutch governor who tried to enforce religious uniformity. Unpopular; the colony fell to the English with little resistance in 1664.'],
+ [3,'Person','Duke of York','Charles II\'s brother, given New Amsterdam in 1664. Kept New York, gave New Jersey to two political allies. Later James II.'],
+ [3,'Person','William Penn','Quaker proprietor of Pennsylvania (land granted in 1681 to repay a royal debt to his father). Paid Indians for land but allowed slavery. Charter of Liberties in 1701.'],
+ [3,'Term','Quakers','Dissenters who worship in silence, have no formal clergy, give women equal standing, and are pacifists. Persecuted in England and Massachusetts.'],
+ [3,'Place','New Sweden (1638)','Swedish and Finnish colony at Fort Christina (today\'s Wilmington). Dutch conquered it in 1655, English in 1664. It became Delaware.'],
+ [3,'Place','Carolina','Charles II gave it to eight supporters. Poor white farmers in the north; rice plantations in the south on the Barbados model. Split in 1729.'],
+ [3,'Person','James Oglethorpe','Founded Georgia (1733) as a haven for debtors and a buffer against Spanish Florida. Excluded Catholics and Africans.'],
+ [3,'Event','Pequot War (1637)','Puritans with Mohegan and Narragansett allies attacked a Pequot fort on the Mystic River. Survivors were sold into slavery.'],
+ [3,'Person','Metacom (King Philip)','Massasoit\'s son. Led King Philip\'s War (1675-76). Killed in 1676; his head was displayed in Plymouth for years.'],
+ [3,'Event','King Philip\'s War (1675-76)','About 500 of 70,000 New Englanders died, a larger share than in the Revolution, Civil War, or WWII. More than 1,000 Indians were sold into slavery.'],
+ [3,'Event','Bacon\'s Rebellion (1676)','Nathaniel Bacon\'s army of poor whites, servants, and Africans attacked Indians and burned Jamestown. It ended indentured servitude in favor of slavery; Indians ceded land in 1677.'],
+ [3,'Person','Sir William Berkeley','Royal governor of Virginia whose small circle kept most tobacco profits. The target of Bacon\'s Rebellion.'],
+ [3,'Person','Samuel de Champlain','Founded Quebec (1608) and allied with the Montagnais and Hurons against the Iroquois.'],
+ [3,'Person','Marquette and Joliet','Sent by Governor Frontenac in 1672 to explore the Mississippi; learned it flowed south.'],
+ [3,'Person','Robert de La Salle','Led a 1679 expedition down the Mississippi, claimed "Louisiana" for France, and was murdered by his own men in 1687.'],
+ [3,'Event','Pueblo Revolt (1680)','Led by Pope. The most successful Indian uprising ever; the Spanish were driven from Santa Fe. De Vargas returned in 1692 and let Indians keep both faiths.'],
+ [3,'Event','Salem Witch Trials (1692)','144 charged, 20 executed. Began with fits in Reverend Parris\'s household and the accusation of Tituba. Ended after Judge Sewall apologized.'],
+ [3,'Place','New Orleans (1718)','French Gulf Coast city, founded after Biloxi and Mobile to secure the mouth of the Mississippi.'],
+ [3,'Term','Iroquois and the Hurons','The Iroquois overran Huron villages in the 1640s and the Hurons disappeared after 1648. Louis XIV made New France a royal province in 1663.']
+].map((c, i) => ({ id: i, ch: c[0], type: c[1], q: c[2], a: c[3] }));
+
+const EVENTS = [
+ {id:'e1', n:'Smith in Jamestown', d:'1607-1609', y:1607, set:'one'},
+ {id:'e2', n:'Establishment of Quebec', d:'1608', y:1608, set:'one'},
+ {id:'e3', n:'Dutch establish New Amsterdam', d:'1626', y:1626, set:'one'},
+ {id:'e4', n:'"City on a Hill"', d:'1630', y:1630, set:'one'},
+ {id:'e5', n:'Fundamental Orders of CT', d:'1639', y:1639, set:'one'},
+ {id:'e6', n:'MD Act of Toleration', d:'1649', y:1649, set:'one'},
+ {id:'e7', n:'Halfway Covenant', d:'1662', y:1662, set:'one'},
+ {id:'e8', n:'King Philip\'s War', d:'1675-1676', y:1675, set:'one'},
+ {id:'e9', n:'Bacon\'s Rebellion', d:'1676', y:1676, set:'one'},
+ {id:'e10', n:'Salem Witch Trials', d:'1692', y:1692, set:'one'},
+ {id:'f1', n:'Establishment of Jamestown', d:'1607', y:1607, set:'two'},
+ {id:'f2', n:'Africans arrive in Jamestown', d:'1619', y:1619, set:'two'},
+ {id:'f3', n:'Mayflower Compact', d:'1620', y:1620, set:'two'},
+ {id:'f4', n:'Establishment of Boston', d:'1630', y:1630, set:'two'},
+ {id:'f5', n:'The Pequot War', d:'1637', y:1637, set:'two'},
+ {id:'f6', n:'New Sweden founded', d:'1638', y:1638, set:'two'},
+ {id:'f7', n:'English take New Amsterdam', d:'1664', y:1664, set:'two'},
+ {id:'f8', n:'Pueblo Revolt', d:'1680', y:1680, set:'two'},
+ {id:'f9', n:'Penn\'s "Holy Experiment"', d:'1681', y:1681, set:'two'},
+ {id:'f10', n:'The Glorious Revolution', d:'1688-1689', y:1688, set:'two'}
+];
+
+const DECADES = [
+ { items: 'indentured servants, Mayflower Compact, Roger Williams, Great Puritan Migration, House of Burgesses', ans: '1600-1650', why: 'House of Burgesses 1619, Mayflower Compact 1620, Great Migration 1630s, Williams 1631-36. Indentured servants were the main early labor force.' },
+ { items: 'Pilgrims/Separatists, Anne Hutchinson, headright system, freedom of conscience, City upon a Hill', ans: '1600-1650', why: 'Pilgrims 1620, City upon a Hill 1630, headrights in Virginia (1618) and Maryland (1630s), Williams and freedom of conscience 1636, Hutchinson 1637. All before 1650.' },
+ { items: 'Glorious Revolution, William and Mary, Second Treatise on Government, English Bill of Rights', ans: '1650-1700', why: 'All tied to 1688-1689, when William and Mary replaced James II, Parliament passed the Bill of Rights, and Locke published his Second Treatise.' }
+];
+
+const IDENT = [
+ ['Indentured servants','Indentured servants were laborers who worked a set number of years (often to pay for passage) and were Virginia\'s main workforce early on, but after Bacon\'s Rebellion planters shifted to permanent enslaved African labor.'],
+ ['Puritans','The Puritans were Protestants who wanted to "purify" the Church of England and left for Massachusetts Bay in the 1630s to build a model Christian commonwealth, but later generations grew more secular, forcing compromises like the Halfway Covenant.'],
+ ['Roger Williams','Roger Williams was a Puritan dissenter banished from Massachusetts who founded Providence (Rhode Island) on religious toleration and paying Indians for land, showing colonies moving from religious uniformity toward toleration.'],
+ ['House of Burgesses','The House of Burgesses was Virginia\'s elected assembly (1619), the first representative legislature in English America, which began a tradition of colonial self-government.'],
+ ['Salem Witch Trials','The Salem Witch Trials were the 1692 Massachusetts hysteria in which 144 people were charged and 20 executed, revealing deep class, gender, and war-time fears and ending as one of the last religious executions in North America.'],
+ ['Patroonships','Patroonships were huge Hudson River estates the Dutch gave wealthy investors who settled at least 50 people, creating private fiefdoms in New Netherland that still never grew the colony past 10,000 people.'],
+ ['Headright system','The headright system gave settlers 100 acres (plus 100 per extra adult, 50 per child) and drew many colonists to Virginia and Maryland, but it also created a huge demand for tobacco labor that led from indentured servitude to slavery.'],
+ ['Colonial charter','A colonial charter was the crown\'s legal grant letting a company or proprietor settle and govern land, and it evolved from a business document (Virginia Company) into the basis of self-government when Massachusetts Bay carried its charter to America.'],
+ ['Bacon\'s Rebellion','Bacon\'s Rebellion was the 1676 uprising of poor whites, servants, and Africans against Governor Berkeley and nearby Indians, and it convinced elites to phase out indentured servitude in favor of enslaved labor while costing Virginia\'s Indians their lands.'],
+ ['Proprietary colony','A proprietary colony was owned by one person and his heirs (Maryland, Pennsylvania, Carolina), marking a shift from corporate colonies to land granted as private property to favorites of the crown.'],
+ ['Massachusetts school laws','The Massachusetts school laws (Harvard in 1636, required town schools in 1647) reflected the Puritan belief that everyone must read the Bible, making New England\'s literacy higher than other colonies and tying education to religion and government.']
+];
+
+const RECALL = {
+ 2: {
+  title: 'Chapter 2: First Encounters, First Conquest, 1492-1607',
+  thesis: 'Between 1492 and 1607, religious division and the rise of nation-states, the hunt for wealth, and contact with Native peoples through disease, conquest, resistance, and blending created a new Atlantic world in which Spain led and England and France later challenged, and Native societies were devastated but never simply disappeared.',
+  cats: [
+   { name: 'Religion and the nation-state', facts: [
+    'Martin Luther posted the 95 Theses, starting the Protestant Reformation',
+    'Peace of Augsburg (1555) and Treaty of Westphalia (1648): the ruler\'s faith decided the people\'s faith',
+    'Henry VIII broke with the pope; Parliament made him "Supreme Head" of the Church of England',
+    'Act of Uniformity (1559): Elizabeth "Supreme Governor"; Book of Common Prayer; weekly attendance required',
+    'By 1547 England held Anglicans (majority), Puritans, and Catholics',
+    'Spanish Armada (1588) destroyed by storms and the English navy, linking Protestantism and English patriotism',
+    'Treaty of Tordesillas (1494): Pope divided the New World between Spain and Portugal',
+    'Printing spread Reformation ideas: 10+ million books by 1500',
+    'Fort Caroline (French Protestants, 1564) destroyed by Menendez de Aviles, who founded St. Augustine (1565)',
+    'Las Casas gave up his encomienda (1514) and protested the oppression of Indians' ] },
+   { name: 'Economic motives and the Atlantic world', facts: [
+    'Columbian Exchange: diseases, plants, animals, cultures crossed the Atlantic',
+    'Gold drove conquest; Peru\'s gold (45,000 enslaved miners) made Charles V and Philip II richest in Europe',
+    'Trade shifted from the overland Silk Road (Venice, Genoa) to Atlantic routes (Spain, Portugal)',
+    'Balboa saw the Pacific (1513); Magellan\'s crew circled the globe (1519-22); gold reached Manila',
+    'Francis Drake, a privateer, kept 4/5 of captured Spanish prizes',
+    'Primogeniture: younger sons became soldiers seeking wealth through conquest',
+    'Verrazano (1524), Cartier (1534), and Cabot (1497) sought sea routes to Asia',
+    'Cibola, Coronado, and De Soto found no gold, so Spanish interest north of Mexico faded',
+    'Raleigh\'s Roanoke colonies (1585, 1587) aimed at a privateer base; vanished by 1590',
+    'Onate claimed New Mexico (1598); by 1609 Santa Fe\'s colony shifted from gold to farming' ] },
+   { name: 'Native-European encounters', facts: [
+    'Disease: Tainos fell from ~1 million to ~1,000; Native populations dropped up to 90%; smallpox killed up to half the Aztecs',
+    'Cortes conquered the Aztecs (1519-21) with non-Aztec allies; Pizarro defeated the Inca (1532)',
+    'Spanish success: Native allies, dishonesty, superior technology, smallpox',
+    'Ovando burned the caciques (1503); Columbus killed Tainos in retribution (1494) and was sent home in chains',
+    'Encomienda: Indians, then enslaved Africans, forced to work Spanish estates and mines',
+    'Mixed-race societies: Spanish took indigenous wives; Florida\'s blend created new cultures (St. Augustine, ~80 missions)',
+    'Resistance: Ponce de Leon died from a poisoned arrow; Pueblos misled Coronado; hostility toward De Soto',
+    'Cabeza de Vaca and Esteban walked ~8 years to Mexico City; Natives saw them as different',
+    'De Soto took prisoners and killed the generous; later explorers found empty lands (disease?)',
+    'Onate burned Acoma (1,000 killed), was recalled in 1609; Santa Fe became the capital' ] }
+  ]
+ },
+ 3: {
+  title: 'Chapter 3: Settlements, Alliances, and Resistance, 1607-1718',
+  thesis: 'Between 1607 and 1718, English colonies grew from struggling outposts into diverse societies in which religious dissent and demands for self-government shaped New England and the middle colonies, tobacco and the headright system pushed the South toward racial slavery, and conflicts with Native peoples, among colonists, and with France and Spain made North America a contested land.',
+  cats: [
+   { name: 'Religious dissent and self-government', facts: [
+    'Massachusetts Bay (1630): "city upon a hill"; 20,000 came in the Great Migration; Great and General Court; only church members voted',
+    'Pilgrims founded Plymouth (1620); the Mayflower Compact set up self-government',
+    'Roger Williams founded Providence/Rhode Island (1636): toleration, paid Indians for land',
+    'Anne Hutchinson claimed direct revelations, was exiled, killed in 1643',
+    'Maryland: Catholic haven; 1649 freedom of worship for those accepting the divinity of Christ',
+    'Pennsylvania: Quaker haven (1681); Charter of Liberties (1701) created an elected legislature',
+    'Fundamental Orders of Connecticut (1639) gave more men the vote; New Haven formed as stricter (united 1662)',
+    'Halfway Covenant (1662): baptized adults could baptize children without full membership',
+    'Charles I sent a ship to retrieve the charter; militia and cannons in Boston harbor turned it away',
+    'Puritan literacy: Harvard (1636), Boston Latin, 1647 law requiring a school in every township' ] },
+   { name: 'Economy and labor: from tobacco to slavery', facts: [
+    'Tobacco saved Jamestown; King James profited from a royal monopoly despite hating it',
+    'Headright system (VA and MD): 100 acres per settler, +100 per extra adult, +50 per child',
+    '1619: about 20 Africans arrived in Jamestown; status unclear (maybe indentured)',
+    'Indentured servants: most died before finishing terms until the 1640s; servants and slaves intermarried',
+    'Maryland (1661) first slave laws: status from the mother; lifelong',
+    'Bacon\'s Rebellion (1676) led to phasing out indentured servitude for enslaved labor',
+    'Carolina rice plantations copied Barbados; New Amsterdam had the most enslaved Africans; 150 reached Philadelphia in 1684',
+    'Anthony Johnson, once enslaved, won freedom, owned a 250-acre farm and a slave; no one could repeat it by the 1700s',
+    'Dutch fur trade (Fort Orange, New Amsterdam); patroons got Hudson tracts for settling 50; Iroquois played Dutch vs. French',
+    'Virginia Company failed (no China route, no metals, conflict); bankrupted; royal colony in 1624' ] },
+   { name: 'Conflict and competition: Native peoples, colonists, empires', facts: [
+    'King Philip\'s War (1675-76): Metacom; ~500 of 70,000 died; 1,000+ Indians sold into Caribbean slavery',
+    'Bacon\'s Rebellion (1676): attacked Indians, defied Berkeley, burned Jamestown; Indians ceded lands in 1677',
+    'Pequot War (1637): Puritans with Mohegan and Narragansett allies attacked the Mystic River fort; survivors enslaved',
+    'Jamestown and Powhatan: Smith/Pocahontas; Starving Time (1609-10); Opechancanough 1622 killed ~300 of 1,200',
+    'Plymouth and the Wampanoag: Samoset, Massasoit, Squanto; 54-year peace; first Thanksgiving (1621)',
+    'Pueblo Revolt (1680): Pope; most successful Indian uprising; De Vargas returned 1692 and let Indians keep both faiths',
+    'French expansion: Quebec (1608), Montreal (1642), Marquette and Joliet (1672), La Salle, New Orleans (1718)',
+    'Iroquois overran the Hurons in the 1640s; Louis XIV made New France royal in 1663',
+    'Salem Witch Trials (1692): 144 charged, 20 executed; class, gender, and fear of Indian attacks',
+    'English Civil War (1640s); Charles II rewarded supporters with colonies; England took New Amsterdam (1664)' ] }
+  ]
+ }
+};
+
+/* ---------- tabs / routing ---------- */
+const TABS = [['learn','Learn'],['cards','Flashcards'],['quiz','Quiz'],['timeline','Timeline'],['identify','Identifiers'],['recall','Recall']];
+let tab = 'learn';
+const view = document.getElementById('view');
+const tabsEl = document.getElementById('tabs');
+function drawTabs() {
+  tabsEl.innerHTML = TABS.map(([id, name]) => `<button role="tab" data-t="${id}" aria-selected="${id === tab}">${name}</button>`).join('');
+}
+tabsEl.addEventListener('click', e => {
+  const b = e.target.closest('button[data-t]'); if (!b) return;
+  setTab(b.dataset.t);
+});
+function setTab(id) {
+  tab = id; drawTabs();
+  try { history.replaceState(null, '', '#' + id); } catch (e) {}
+  render();
+}
+window.addEventListener('hashchange', () => {
+  const id = location.hash.slice(1);
+  if (TABS.some(t => t[0] === id) && id !== tab) { tab = id; drawTabs(); render(); }
+});
+function render() { ({ learn: renderLearn, cards: renderCards, quiz: renderQuiz, timeline: renderTimeline, identify: renderIdentify, recall: renderRecall })[tab](); }
+
+/* ---------- FLASHCARDS ---------- */
+const FC = { scope: 'all', mode: 'all', deck: [], pos: 0, flipped: false, known: new Set(store.get('cad-known', [])), seen: 0 };
+const inScope = c => FC.scope === 'all' || String(c.ch) === String(FC.scope);
+function buildDeck() {
+  let d = CARDS.filter(inScope);
+  if (FC.mode === 'unknown') d = d.filter(c => !FC.known.has(c.id));
+  FC.deck = shuffle(d); FC.pos = 0; FC.flipped = false;
+}
+function saveKnown() { store.set('cad-known', Array.from(FC.known)); }
+function renderCards() {
+  if (!FC.deck.length && FC.pos === 0 && !FC._built) { buildDeck(); FC._built = true; }
+  const scoped = CARDS.filter(inScope);
+  const knownN = scoped.filter(c => FC.known.has(c.id)).length;
+  const chip = (g, v, label) => `<button class="chip" data-g="${g}" data-v="${v}" aria-pressed="${String(FC[g]) === String(v)}">${label}</button>`;
+  let html = `<div class="bar">${chip('scope','all','All')}${chip('scope','2','Chapter 2')}${chip('scope','3','Chapter 3')}<span class="spacer"></span>${chip('mode','all','Every card')}${chip('mode','unknown','Still learning')}</div>
+    <div class="meter" aria-hidden="true"><i style="width:${scoped.length ? Math.round(knownN / scoped.length * 100) : 0}%"></i></div>
+    <div class="meta"><span>${knownN} of ${scoped.length} marked known</span><span>${FC.deck.length ? Math.min(FC.pos + 1, FC.deck.length) + ' / ' + FC.deck.length : ''}</span></div>`;
+  if (!FC.deck.length) {
+    html += `<div class="panel done"><p class="big">Nothing left</p><p class="sub">Every card in this set is marked known. Switch to "Every card" to review them again.</p></div>`;
+  } else if (FC.pos >= FC.deck.length) {
+    const left = FC.deck.filter(c => !FC.known.has(c.id)).length;
+    html += `<div class="panel done"><p class="big">Round done</p><p>${left} still learning out of ${FC.deck.length}.</p>
+      <div class="row"><button class="btn" id="again">${left ? 'Drill the ' + left + ' still learning' : 'Go again'}</button><button class="btn ghost" id="restart">Reshuffle everything</button></div></div>`;
+  } else {
+    const c = FC.deck[FC.pos];
+    html += `<button class="card ${FC.flipped ? 'flipped' : ''}" id="card" aria-label="Flashcard. Press to flip.">
+      <span class="tag">Chapter ${c.ch} &middot; ${c.type}</span>
+      ${FC.flipped ? `<span class="back">${esc(c.a)}</span>` : `<span class="front">${esc(c.q)}</span><span class="hint">Say the answer out loud, then tap to flip.</span>`}
+    </button>
+    <div class="row"><button class="btn ghost" id="learn">Still learning</button><button class="btn" id="got">Got it</button></div>
+    <div class="row" style="margin-top:10px"><button class="btn ghost" id="prev" ${FC.pos === 0 ? 'disabled' : ''}>Back</button><button class="btn ghost" id="skip">Skip</button></div>`;
+  }
+  view.innerHTML = html;
+}
+function fcAdvance() { FC.pos++; FC.flipped = false; renderCards(); }
+view.addEventListener('click', e => {
+  if (tab !== 'cards') return;
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.g) { FC[t.dataset.g] = t.dataset.v; buildDeck(); FC._built = true; renderCards(); return; }
+  if (t.id === 'card') { FC.flipped = !FC.flipped; renderCards(); const n = document.getElementById('card'); if (n) n.focus(); }
+  else if (t.id === 'got') { FC.known.add(FC.deck[FC.pos].id); saveKnown(); fcAdvance(); }
+  else if (t.id === 'learn') { FC.known.delete(FC.deck[FC.pos].id); saveKnown(); fcAdvance(); }
+  else if (t.id === 'skip') fcAdvance();
+  else if (t.id === 'prev') { FC.pos = Math.max(0, FC.pos - 1); FC.flipped = false; renderCards(); }
+  else if (t.id === 'again') { const left = FC.deck.filter(c => !FC.known.has(c.id)); FC.deck = shuffle(left.length ? left : FC.deck); FC.pos = 0; FC.flipped = false; renderCards(); }
+  else if (t.id === 'restart') { buildDeck(); renderCards(); }
+});
+
+/* ---------- QUIZ ---------- */
+const QZ = { phase: 'setup', scope: 'all', n: 10, qs: [], i: 0, picked: null, score: 0, missed: [] };
+function pick(arr, n, not) { return shuffle(arr.filter(x => !not.includes(x))).slice(0, n); }
+function makeQuestion(card, pool) {
+  const roll = Math.random();
+  const others = pool.filter(c => c.id !== card.id);
+  if (roll < 0.5) { // describe -> name
+    const wrong = pick(others.map(c => c.q), 3, [card.q]);
+    return { prompt: card.a, lead: 'Which one is this?', opts: shuffle([card.q, ...wrong]), answer: card.q, why: card.a, name: card.q };
+  }
+  const wrong = pick(others.map(c => c.a), 3, [card.a]);
+  return { prompt: card.q, lead: 'What is it?', opts: shuffle([card.a, ...wrong]), answer: card.a, why: card.a, name: card.q };
+}
+function makeDateQuestion(ev) {
+  const wrong = pick(Array.from(new Set(EVENTS.map(e => e.d))), 3, [ev.d]);
+  return { prompt: ev.n, lead: 'When did this happen?', opts: shuffle([ev.d, ...wrong]), answer: ev.d, why: ev.n + ': ' + ev.d, name: ev.n };
+}
+function startQuiz(qs) { QZ.qs = qs; QZ.i = 0; QZ.picked = null; QZ.score = 0; QZ.missed = []; QZ.phase = 'run'; renderQuiz(); }
+function buildQuiz() {
+  const pool = CARDS.filter(c => QZ.scope === 'all' || String(c.ch) === String(QZ.scope));
+  const dateOK = QZ.scope !== '2';
+  const picks = shuffle(pool).slice(0, QZ.n);
+  const qs = picks.map(c => (dateOK && Math.random() < 0.15) ? makeDateQuestion(EVENTS[Math.floor(Math.random() * EVENTS.length)]) : makeQuestion(c, pool));
+  startQuiz(qs);
+}
+function renderQuiz() {
+  if (QZ.phase === 'setup') {
+    const chip = (g, v, label) => `<button class="chip" data-qg="${g}" data-v="${v}" aria-pressed="${String(QZ[g]) === String(v)}">${label}</button>`;
+    view.innerHTML = `<div class="panel"><h2>Multiple choice</h2><p class="sub">Questions are pulled at random from every flashcard, so each round is different. Some ask you to name the term, some to recall what it was, and a few ask for dates.</p>
+      <p><b>Chapter</b></p><div class="bar">${chip('scope','all','Both')}${chip('scope','2','Chapter 2')}${chip('scope','3','Chapter 3')}</div>
+      <p><b>Length</b></p><div class="bar">${chip('n',10,'10')}${chip('n',20,'20')}${chip('n',30,'30')}</div>
+      <button class="btn" id="qstart">Start quiz</button></div>`;
+    return;
+  }
+  if (QZ.phase === 'done') {
+    const pct = Math.round(QZ.score / QZ.qs.length * 100);
+    view.innerHTML = `<div class="panel done"><p class="big">${QZ.score} / ${QZ.qs.length}</p><p class="sub">${pct}% correct</p>
+      ${QZ.missed.length ? `<p style="text-align:left"><b>Missed:</b></p><ul class="missed">${QZ.missed.map(m => `<li><b>${esc(m.name)}</b>${esc(m.answer)}</li>`).join('')}</ul>` : '<p>No misses. Run it again on the other chapter.</p>'}
+      <div class="row">${QZ.missed.length ? '<button class="btn" id="qretry">Retry the missed ones</button>' : ''}<button class="btn ghost" id="qnew">New quiz</button></div></div>`;
+    return;
+  }
+  const q = QZ.qs[QZ.i];
+  const answered = QZ.picked !== null;
+  view.innerHTML = `<div class="meter" aria-hidden="true"><i style="width:${Math.round(QZ.i / QZ.qs.length * 100)}%;background:var(--accent)"></i></div>
+    <div class="meta"><span>Question ${QZ.i + 1} of ${QZ.qs.length}</span><span>${QZ.score} correct</span></div>
+    <div class="sub">${esc(q.lead)}</div><div class="q">${esc(q.prompt)}</div>
+    <div class="opts">${q.opts.map((o, k) => `<button class="opt ${answered ? (o === q.answer ? 'right' : (k === QZ.picked ? 'wrong' : '')) : ''}" data-k="${k}" ${answered ? 'disabled' : ''}>${esc(o)}</button>`).join('')}</div>
+    ${answered ? `<p class="fb">${q.opts[QZ.picked] === q.answer ? '<b class="ok">Right.</b>' : '<b class="no">Not quite.</b>'} ${esc(q.why)}</p><button class="btn" id="qnext">${QZ.i + 1 === QZ.qs.length ? 'See results' : 'Next question'}</button>` : ''}`;
+}
+view.addEventListener('click', e => {
+  if (tab !== 'quiz') return;
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.qg) { QZ[t.dataset.qg] = isNaN(t.dataset.v) ? t.dataset.v : (t.dataset.qg === 'n' ? Number(t.dataset.v) : t.dataset.v); renderQuiz(); }
+  else if (t.id === 'qstart') buildQuiz();
+  else if (t.dataset.k !== undefined && QZ.picked === null) {
+    QZ.picked = Number(t.dataset.k); const q = QZ.qs[QZ.i];
+    if (q.opts[QZ.picked] === q.answer) QZ.score++; else QZ.missed.push(q);
+    renderQuiz();
+  }
+  else if (t.id === 'qnext') { QZ.i++; QZ.picked = null; if (QZ.i >= QZ.qs.length) QZ.phase = 'done'; renderQuiz(); }
+  else if (t.id === 'qretry') startQuiz(QZ.missed.map(q => ({ ...q, opts: shuffle(q.opts) })));
+  else if (t.id === 'qnew') { QZ.phase = 'setup'; renderQuiz(); }
+});
+
+/* ---------- TIMELINE ---------- */
+const TL = { set: 'one', pool: [], placed: [], checked: false };
+function resetTL() {
+  const evs = EVENTS.filter(e => TL.set === 'all' || e.set === TL.set);
+  TL.pool = shuffle(evs.map(e => e.id)); TL.placed = []; TL.checked = false;
+}
+const evById = id => EVENTS.find(e => e.id === id);
+const DEC = { picked: {} };
+function renderTimeline() {
+  if (!TL.pool.length && !TL.placed.length) resetTL();
+  const total = TL.pool.length + TL.placed.length;
+  const sorted = TL.placed.concat(TL.pool).map(evById).sort((a, b) => a.y - b.y);
+  const chip = (v, label) => `<button class="chip" data-s="${v}" aria-pressed="${TL.set === v}">${label}</button>`;
+  let html = `<div class="section"><h2>Put them in order</h2><p class="sub">Tap events from earliest to most recent. Tap a placed event to take it back out.</p>
+    <div class="bar">${chip('one','Set one')}${chip('two','Set two')}${chip('all','All 20 mixed')}</div>
+    <div class="pool">${TL.pool.map(id => `<button class="ev" data-add="${id}">${esc(evById(id).n)}</button>`).join('') || '<span class="sub">All placed.</span>'}</div>
+    <ol class="order">`;
+  for (let i = 0; i < total; i++) {
+    const id = TL.placed[i];
+    if (id) {
+      const e = evById(id); let cls = 'filled';
+      if (TL.checked) cls += e.y === sorted[i].y ? ' ok' : ' no';
+      html += `<li class="${cls}"><button data-rm="${i}">${esc(e.n)}</button>${TL.checked ? `<span class="yr">${esc(e.d)}</span>` : ''}</li>`;
+    } else html += '<li></li>';
+  }
+  html += `</ol><div class="row"><button class="btn" id="tlcheck" ${TL.placed.length === total && !TL.checked ? '' : 'disabled'}>Check order</button><button class="btn ghost" id="tlreset">Shuffle and restart</button></div>`;
+  if (TL.checked) {
+    const right = TL.placed.filter((id, i) => evById(id).y === sorted[i].y).length;
+    html += `<p class="fb" style="margin-top:14px"><b class="${right === total ? 'ok' : 'no'}">${right} of ${total} in the right spot.</b> Correct order:</p><ul class="key">${sorted.map(e => `<li><span class="yr">${esc(e.d)}</span><span>${esc(e.n)}</span></li>`).join('')}</ul>`;
+  }
+  html += `</div><div class="panel" style="margin-top:22px"><h2>Decade association</h2><p class="sub">Pick the range that fits the whole group.</p>`;
+  DECADES.forEach((g, i) => {
+    const p = DEC.picked[i];
+    html += `<div class="dec"><p>${esc(g.items)}</p><div class="bar">${['1600-1650', '1650-1700'].map(r => `<button class="chip" data-dec="${i}" data-r="${r}" aria-pressed="${p === r}">${r}</button>`).join('')}</div>
+      ${p ? `<div class="fbk"><b style="color:var(--${p === g.ans ? 'good' : 'bad'})">${p === g.ans ? 'Right.' : 'Not this one; it is ' + g.ans + '.'}</b> ${esc(g.why)}</div>` : ''}</div>`;
+  });
+  html += '</div>';
+  view.innerHTML = html;
+}
+view.addEventListener('click', e => {
+  if (tab !== 'timeline') return;
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.s) { TL.set = t.dataset.s; resetTL(); renderTimeline(); }
+  else if (t.dataset.add) { TL.pool = TL.pool.filter(x => x !== t.dataset.add); TL.placed.push(t.dataset.add); renderTimeline(); }
+  else if (t.dataset.rm !== undefined && !TL.checked) { const id = TL.placed.splice(Number(t.dataset.rm), 1)[0]; TL.pool.push(id); renderTimeline(); }
+  else if (t.id === 'tlcheck') { TL.checked = true; renderTimeline(); }
+  else if (t.id === 'tlreset') { resetTL(); renderTimeline(); }
+  else if (t.dataset.dec !== undefined) { DEC.picked[t.dataset.dec] = t.dataset.r; renderTimeline(); }
+});
+
+/* ---------- IDENTIFIERS ---------- */
+const IDS = { shown: {} };
+function renderIdentify() {
+  let html = `<div class="section"><h2>One sentence, two jobs</h2><p class="sub">Each answer must say what the thing was and what change over time it represents. Not a definition. Try: "[Term] was ___ that ___, which shows ___."</p>`;
+  IDENT.forEach(([term, model], i) => {
+    html += `<div class="ident"><h3>${esc(term)}</h3>
+      <textarea id="ta${i}" placeholder="Write your sentence here first" aria-label="Your sentence for ${esc(term)}">${esc(IDS['t' + i] || '')}</textarea>
+      <button class="btn ghost" data-m="${i}">${IDS.shown[i] ? 'Hide model answer' : 'Show model answer'}</button>
+      ${IDS.shown[i] ? `<div class="model">${esc(model)}</div>` : ''}</div>`;
+  });
+  view.innerHTML = html + '</div>';
+}
+view.addEventListener('input', e => { if (tab === 'identify' && e.target.id && e.target.id.startsWith('ta')) IDS['t' + e.target.id.slice(2)] = e.target.value; });
+view.addEventListener('click', e => {
+  if (tab !== 'identify') return;
+  const t = e.target.closest('button[data-m]'); if (!t) return;
+  IDS.shown[t.dataset.m] = !IDS.shown[t.dataset.m]; renderIdentify();
+});
+
+/* ---------- RECALL ---------- */
+const RC = { ch: 2, on: {} };
+function renderRecall() {
+  const d = RECALL[RC.ch];
+  const chip = (v, label) => `<button class="chip" data-rc="${v}" aria-pressed="${RC.ch === v}">${label}</button>`;
+  const item = (key, n, text, cls) => `<button class="mask ${cls || ''} ${RC.on[key] ? 'on' : ''}" data-k="${key}" aria-pressed="${!!RC.on[key]}"><span class="n">${n}</span><span class="t">${esc(text)}</span></button>`;
+  let html = `<div class="section"><h2>${esc(d.title)}</h2><p class="sub">Read the category, say the ten facts you can recall, then tap each line to check yourself. This is the structure the review packet asks for: a thesis, three categories, ten facts each.</p>
+    <div class="bar">${chip(2,'Chapter 2')}${chip(3,'Chapter 3')}<span class="spacer"></span><button class="chip" data-all="1">Reveal all</button><button class="chip" data-all="0">Hide all</button></div>
+    <div class="cat"><h3>Thesis</h3>${item(RC.ch + '-th', '', d.thesis, 'thesis')}</div>`;
+  d.cats.forEach((c, ci) => {
+    html += `<div class="cat"><h3>${ci + 1}. ${esc(c.name)}</h3>${c.facts.map((f, fi) => item(RC.ch + '-' + ci + '-' + fi, fi + 1, f)).join('')}</div>`;
+  });
+  view.innerHTML = html + '</div>';
+}
+view.addEventListener('click', e => {
+  if (tab !== 'recall') return;
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.rc) { RC.ch = Number(t.dataset.rc); renderRecall(); }
+  else if (t.dataset.all !== undefined) {
+    const on = t.dataset.all === '1'; const d = RECALL[RC.ch];
+    RC.on[RC.ch + '-th'] = on; d.cats.forEach((c, ci) => c.facts.forEach((f, fi) => RC.on[RC.ch + '-' + ci + '-' + fi] = on));
+    renderRecall();
+  }
+  else if (t.dataset.k) { RC.on[t.dataset.k] = !RC.on[t.dataset.k]; renderRecall(); }
+});
+
+/* ---------- LEARN ---------- */
+const CH2EV = [
+ {id:'c1', n:'Columbus lands on San Salvador', d:'1492', y:1492},
+ {id:'c2', n:'Treaty of Tordesillas', d:'1494', y:1494},
+ {id:'c12', n:'Luther posts the 95 Theses', d:'1517', y:1517},
+ {id:'c3', n:'Balboa sees the Pacific; Ponce de Leon reaches Florida', d:'1513', y:1513},
+ {id:'c4', n:'Cortes conquers the Aztecs (Magellan sets out)', d:'1519-1521', y:1519},
+ {id:'c5', n:'Pizarro defeats the Inca', d:'1532', y:1532},
+ {id:'c6', n:'De Soto and Coronado expeditions', d:'1539-1542', y:1539},
+ {id:'c9', n:'Elizabeth\'s Act of Uniformity', d:'1559', y:1559},
+ {id:'c7', n:'St. Augustine founded', d:'1565', y:1565},
+ {id:'c11', n:'Roanoke colonies', d:'1585-1590', y:1585},
+ {id:'c10', n:'Spanish Armada defeated', d:'1588', y:1588},
+ {id:'c8', n:'Onate claims New Mexico', d:'1598', y:1598}
+];
+const INFO = {
+ f1:{ what:'105 men found Jamestown, named for King James I. Bad water, drought, and fighting leave only 38 alive by 1608.', why:'The first permanent English colony. "England came to America to stay."', hook:'1607 is your anchor. Every other date in Chapter 3 is "how many years after Jamestown."' },
+ e1:{ what:'John Smith is captured by Powhatan\'s men (the Pocahontas story), becomes governor in 1608, and leaves in 1609.', why:'His rule, "he who does not work, does not eat," kept the colony alive. The Starving Time hit after he left.', hook:'Smith\'s whole stay is Jamestown\'s first three years: 1607, 1608, 1609.', accept:[1607,1608,1609] },
+ e2:{ what:'Samuel de Champlain founds Quebec for France on the St. Lawrence River.', why:'The fur trade starts New France, which later competes with England.', hook:'One year after Jamestown: 1607 England, 1608 France. The French are right behind.' },
+ f2:{ what:'About 20 Africans arrive in Jamestown. Their legal status is unclear; they may have been indentured.', why:'The start of African labor in English America, before slavery was fully defined in law.', hook:'Twelve years after 1607. Say it as "1619, Africans arrive." Virginia\'s House of Burgesses also begins in 1619.' },
+ f3:{ what:'Pilgrims aboard the Mayflower agree to govern themselves after landing north of their Virginia Company grant.', why:'An early step toward government by consent of the people.', hook:'1619 then 1620, back to back: Africans arrive, then the Pilgrims. Pilgrims = the round number, 1620.' },
+ e3:{ what:'The Dutch build New Amsterdam on Manhattan Island, supposedly buying it for 60 guilders (about $24).', why:'Starts a diverse, trade-focused colony. England takes it in 1664.', hook:'Six years after the Mayflower. Link "$24 for Manhattan" to 1626.' },
+ f4:{ what:'John Winthrop leads 14 ships and over 1,000 Puritans to Massachusetts, and Boston is founded.', why:'The Great Migration begins. Massachusetts Bay soon holds more people than Plymouth and Jamestown combined.', hook:'1630 is Boston AND the "city on a hill" speech. Same year, same man: John Winthrop.' },
+ e4:{ what:'Winthrop tells the Puritans they will be "as a Citty upon a hill. The eyes of all people are upon Us."', why:'Shows the Puritan goal: a model Christian commonwealth for England and the world.', hook:'Pair it with Boston. Both are 1630.' },
+ f5:{ what:'Puritans and their Mohegan and Narragansett allies attack a Pequot fort on the Mystic River. Survivors are sold into slavery.', why:'The first major war between New England colonists and Native peoples, a warning of King Philip\'s War to come.', hook:'Count up: 37, 38, 39. Pequot War (37), New Sweden (38), Connecticut\'s Fundamental Orders (39).' },
+ f6:{ what:'Swedish and Finnish settlers found a small colony at Fort Christina, today\'s Wilmington, Delaware.', why:'Delaware\'s first European settlement. The Dutch conquer it in 1655 and the English in 1664.', hook:'The middle one: Sweden is 38.' },
+ e5:{ what:'Puritans on the Connecticut River write a formal government at Hartford.', why:'More men could vote than in Massachusetts. Some call it the first written constitution in America.', hook:'The last of the three: Connecticut is 39.' },
+ e6:{ what:'Maryland grants freedom of worship to all Christians who accept the divinity of Christ.', why:'Attracts Protestant settlers to a Catholic colony. An early step toward toleration, but only for Christians.', hook:'1649 is exactly ten years after 1639. Think "end of the 1640s."' },
+ e7:{ what:'Massachusetts clergy let baptized adults who are not full church members have their own children baptized.', why:'Shows Puritan religious fervor fading. Church membership also meant the right to vote.', hook:'1662 is also when Connecticut and New Haven unite. Think "Puritan adjustments, 1662."' },
+ f7:{ what:'Charles II gives New Amsterdam to his brother, the Duke of York, who sends a fleet. The Dutch barely resist and it becomes New York.', why:'England now controls the Atlantic coast, and New York becomes one of its most valuable colonies.', hook:'"64: New York." Carolina was founded the year before, in 1663.' },
+ e8:{ what:'Metacom (King Philip) of the Wampanoag leads a brutal war against New England colonists.', why:'About 500 of 70,000 colonists died, a larger share than in the Revolution, Civil War, or WWII. Over 1,000 Wampanoags were sold into slavery.', hook:'It starts in 1675 and ends in 1676, the same year as Bacon\'s Rebellion.', accept:[1675,1676] },
+ e9:{ what:'Nathaniel Bacon leads poor whites, servants, and Africans against Governor Berkeley and nearby Indians, and burns Jamestown.', why:'Elites fear a united poor class and shift from indentured servants to enslaved Africans.', hook:'North and South blow up together: King Philip\'s War in New England (1675-76), Bacon\'s Rebellion in Virginia (1676).' },
+ f8:{ what:'Led by Pope, the Pueblo Indians drive the Spanish out of New Mexico and besiege Santa Fe.', why:'The most successful Indian uprising in history. Spain did not regain control until 1692.', hook:'Pueblo 80, Penn 81. They run back to back.' },
+ f9:{ what:'Charles II grants William Penn land to repay a debt to Penn\'s father. Penn sails in 1682 and founds Philadelphia.', why:'A haven for Quakers that is open to all, with peaceful dealings with Native peoples (but slavery allowed).', hook:'Penn is 81, right after Pueblo at 80.', accept:[1681,1682] },
+ f10:{ what:'Parliament replaces King James II with William and Mary and passes the English Bill of Rights.', why:'Strengthens Parliament over the king, part of the political world the colonies sit inside.', hook:'Say "eighty-eight." The Bill of Rights and Locke\'s Second Treatise follow in 1689.', accept:[1688,1689], note:'Your chapter summary does not give this date; it comes from standard history.' },
+ e10:{ what:'Girls in Reverend Parris\'s household have fits and accuse Tituba, and the hysteria spreads. 144 people are charged and 20 executed.', why:'Reveals tension over class, gender, and fear of Indian attacks. One of the last religious executions in North America.', hook:'Four years after the Glorious Revolution. 1692 is the last event in this packet.' },
+ c1:{ what:'Columbus lands on San Salvador and meets the friendly Taino, thinking he has reached Asia.', why:'Starts permanent contact between Europe and the Americas, and the Columbian Exchange.', hook:'"In fourteen hundred ninety-two, Columbus sailed the ocean blue."' },
+ c2:{ what:'The Pope\'s Treaty of Tordesillas divides the New World between Spain and Portugal.', why:'Explains why Brazil speaks Portuguese and the rest of South America speaks Spanish.', hook:'Two years after Columbus: 1492, then 1494.' },
+ c12:{ what:'Martin Luther posts his 95 Theses on a church door.', why:'Starts the Protestant Reformation, which splits Europe and shapes who colonizes where.', hook:'1517 is 1500 plus 17. Reformation = 1517.', note:'Your chapter summary does not give this date; it comes from standard history.' },
+ c3:{ what:'Balboa becomes the first European to see the Pacific, and Ponce de Leon reaches Florida.', why:'Shows Spain pushing exploration in every direction.', hook:'Balboa and Ponce de Leon share one year: 1513.' },
+ c4:{ what:'Cortes begins conquering the Aztecs (1519-21), takes Tenochtitlan, and renames it Mexico City. Magellan sets out the same year.', why:'Creates New Spain. Smallpox and Native allies make the conquest fast.', hook:'Double event in 1519: Cortes and Magellan.', accept:[1519,1520,1521] },
+ c5:{ what:'Pizarro defeats the Inca emperor, and the empire becomes the Viceroyalty of Peru.', why:'Peru\'s gold, mined by about 45,000 enslaved workers, made Spain\'s kings the richest in Europe.', hook:'Cortes 1519, Pizarro 1532: thirteen years later, the same pattern in South America.' },
+ c6:{ what:'De Soto marches through the Southeast (1539-42) and Coronado through the Southwest (1540-42). Neither finds gold.', why:'Spanish interest north of Mexico fades after these failures.', hook:'Both end in 1542: De Soto dies, Coronado returns to Mexico City.', accept:[1539,1540,1541,1542] },
+ c9:{ what:'Elizabeth I\'s Act of Uniformity makes her head of the Church of England and requires the Book of Common Prayer.', why:'Sets England as Protestant, with Puritans and Catholics both unhappy.', hook:'Elizabeth settles the church in 1559. The Armada comes 29 years later.' },
+ c7:{ what:'Menendez de Aviles founds St. Augustine, Florida, and destroys the French Protestant Fort Caroline.', why:'The oldest city of European origin in the U.S. Spain claims all land north and west of it.', hook:'Fort Caroline 1564, St. Augustine 1565: one year apart.' },
+ c11:{ what:'Raleigh\'s colonies at Roanoke fail. Virginia Dare is born there, and the 1587 colonists have vanished by 1590.', why:'England\'s first colonizing attempts fail, a lesson before Jamestown.', hook:'Roanoke runs 1585 to 1590, just before the 1600s.', accept:[1584,1585,1587,1590] },
+ c10:{ what:'Spain\'s Armada attacks England and is destroyed by storms and the English navy.', why:'England becomes the dominant Atlantic power, and Protestantism links to English patriotism.', hook:'15-88: a double eight. Armada = 1588.' },
+ c8:{ what:'Juan de Onate leads 400 settlers up the Rio Grande and claims New Mexico for Spain. Santa Fe follows soon after.', why:'Starts Spanish settlement of the Southwest and the conflicts that follow (Acoma, the Pueblo Revolt).', hook:'The last event before 1600: 1598.' }
+};
+const LEV = {};
+EVENTS.forEach(e => LEV[e.id] = Object.assign({ track: 3, accept: [e.y] }, e, INFO[e.id] || {}));
+CH2EV.forEach(e => LEV[e.id] = Object.assign({ track: 2, accept: [e.y] }, e, INFO[e.id] || {}));
+const LESSONS = [
+ { id:'L1', track:3, title:'First footholds', span:'1607-1608', ids:['f1','e1','e2'], big:'England and France plant colonies one year apart.' },
+ { id:'L2', track:3, title:'Africans, Pilgrims, Dutch', span:'1619-1626', ids:['f2','f3','e3'], big:'Three more groups arrive: enslaved Africans in Virginia, Separatists in Massachusetts, and the Dutch in New York.' },
+ { id:'L3', track:3, title:'The Puritan decade', span:'1630-1639', ids:['f4','e4','f5','f6','e5'], big:'Boston is founded and New England spreads out. The last three events fall on 37, 38, 39.' },
+ { id:'L4', track:3, title:'Toleration and takeover', span:'1649-1664', ids:['e6','e7','f7'], big:'Maryland widens toleration, Puritan churches adjust, and England takes New Amsterdam.' },
+ { id:'L5', track:3, title:'Rebellions and refuge', span:'1675-1681', ids:['e8','e9','f8','f9'], big:'Wars and a revolt on the frontier, then Penn builds a haven.' },
+ { id:'L6', track:3, title:'Revolution and Salem', span:'1688-1692', ids:['f10','e10'], big:'A revolution in England, then the witch hunt in Massachusetts.' },
+ { id:'L7', track:2, title:'Columbus to Pizarro', span:'1492-1532', ids:['c1','c2','c3','c4','c5'], big:'Spain claims the Americas and conquers two empires.' },
+ { id:'L8', track:2, title:'Reformation and exploration', span:'1517-1559', ids:['c12','c6','c9'], big:'Europe splits over religion while Spain searches North America for gold.' },
+ { id:'L9', track:2, title:'Rivals close in', span:'1565-1598', ids:['c7','c11','c10','c8'], big:'Spain holds Florida and New Mexico while England tries and fails at Roanoke.' }
+];
+const LV = Object.assign({ ev: {}, seen: [], done: [] }, store.get('cad-lv', {}));
+const saveLV = () => store.set('cad-lv', LV);
+const lvl = id => LV.ev[id] || 0;
+const L = { phase: 'home', track: 3, lesson: null, step: 'read', idx: 0, queue: [], picked: null, fb: null, hint: false, pool: [], placed: [], checked: false, rv: { n: 0, ok: 0 }, cheat: false };
+const STEPS = [['read','Read'],['pick','Pick the year'],['type','Type the year'],['order','Put in order']];
+const pips = ids => `<span class="pips" aria-hidden="true">${ids.map(id => `<i class="pip l${lvl(id)}"></i>`).join('')}</span>`;
+
+function neighbors(ev) {
+  const all = Object.values(LEV).filter(x => x.track === ev.track && x.y !== ev.y).sort((a, b) => a.y - b.y);
+  return { prev: all.filter(x => x.y < ev.y).pop(), next: all.find(x => x.y > ev.y) };
+}
+function mcOptions(ev) {
+  const cands = Object.values(LEV).filter(x => x.track === ev.track && x.y !== ev.y).sort((a, b) => Math.abs(a.y - ev.y) - Math.abs(b.y - ev.y));
+  const labels = [];
+  cands.forEach(c => { if (!labels.includes(c.d) && c.d !== ev.d) labels.push(c.d); });
+  const near = labels.slice(0, 2), far = shuffle(labels.slice(2));
+  return shuffle([ev.d, ...near, far[0]].filter(Boolean));
+}
+function startLesson(id) {
+  L.lesson = LESSONS.find(l => l.id === id); L.phase = 'lesson'; L.step = 'read'; L.idx = 0; L.fb = null; L.picked = null;
+  L.lesson.ids.forEach(i => { if (!LV.seen.includes(i)) LV.seen.push(i); }); saveLV(); renderLearn();
+}
+function beginStage(step) {
+  L.step = step; L.picked = null; L.fb = null; L.hint = false;
+  if (step === 'pick' || step === 'type') L.queue = shuffle(L.lesson.ids).map(id => ({ id, mode: step, tries: 0 }));
+  if (step === 'order') { L.pool = shuffle(L.lesson.ids); L.placed = []; L.checked = false; }
+}
+function startReview() {
+  const weak = LV.seen.filter(id => LEV[id] && lvl(id) < 3);
+  if (!weak.length) return;
+  const picks = shuffle(weak).sort((a, b) => lvl(a) - lvl(b)).slice(0, 10);
+  L.phase = 'review'; L.step = 'rq'; L.lesson = null; L.picked = null; L.fb = null; L.hint = false;
+  L.queue = shuffle(picks).map(id => ({ id, mode: Math.random() < 0.6 ? 'type' : 'pick', tries: 0 }));
+  L.rv = { n: picks.length, ok: 0 };
+  renderLearn();
+}
+function finishQueue() {
+  if (L.phase === 'review') { L.step = 'rdone'; return; }
+  beginStage(L.step === 'pick' ? 'type' : 'order');
+}
+function qContinue() {
+  const item = L.queue.shift();
+  if (!L.fb.ok) { item.tries++; delete item.opts; L.queue.push(item); }
+  else if (item.tries === 0 && L.phase === 'review') L.rv.ok++;
+  L.picked = null; L.fb = null; L.hint = false;
+  if (!L.queue.length) finishQueue();
+  renderLearn();
+}
+function renderLearn() {
+  if (L.phase === 'home') learnHome(); else if (L.phase === 'review') learnReview(); else learnLesson();
+  const inp = document.getElementById('typeIn'); if (inp) inp.focus();
+  const c = document.getElementById('qcont'); if (c) c.focus();
+}
+function learnHome() {
+  const ids = Object.keys(LEV), locked = ids.filter(id => lvl(id) >= 3).length;
+  const weak = LV.seen.filter(id => LEV[id] && lvl(id) < 3).length;
+  const chip = (v, label) => `<button class="chip" data-act="track" data-v="${v}" aria-pressed="${L.track === v}">${label}</button>`;
+  const lessons = LESSONS.filter(l => l.track === L.track);
+  let h = `<div class="panel"><h2>Learn the dates first</h2>
+    <p>Each lesson teaches 2 to 5 events with the story behind them and a memory hook. Then you get tested three ways: pick the year, type the year, put the events in order. Anything you miss comes back until you get it.</p>
+    <p class="sub"><b>${locked} of ${ids.length}</b> dates locked in. A date locks after you type it right on the first try three separate times, so come back for reviews.</p></div>
+    <div class="bar">${chip(3, 'Chapter 3 (the packet sets)')}${chip(2, 'Chapter 2')}</div>
+    <div class="lcards">${lessons.map((l, i) => `<button class="lcard" data-act="start" data-id="${l.id}"><span class="lt">Lesson ${LESSONS.indexOf(l) + 1}</span><b>${esc(l.title)}</b><span class="ls">${l.span} &middot; ${l.ids.length} events</span>${pips(l.ids)}${LV.done.includes(l.id) ? '<span class="st">Finished once. Tap to repeat.</span>' : ''}</button>`).join('')}</div>
+    <div class="row"><button class="btn" data-act="review" ${weak ? '' : 'disabled'}>${weak ? 'Review ' + Math.min(weak, 10) + ' weak spots' : 'Review (finish a lesson first)'}</button><button class="btn ghost" data-act="cheat">${L.cheat ? 'Hide' : 'Show'} all dates at a glance</button></div>`;
+  if (L.cheat) {
+    const sorted = Object.values(LEV).filter(x => x.track === L.track).sort((a, b) => a.y - b.y);
+    h += `<div class="panel" style="margin-top:14px"><ul class="cheat">${sorted.map(e => `<li><span class="yr">${esc(e.d)}</span><span>${esc(e.n)}</span></li>`).join('')}</ul></div>`;
+  }
+  view.innerHTML = h;
+}
+function stepsBar() {
+  const cur = STEPS.findIndex(s => s[0] === L.step);
+  return `<div class="steps">${STEPS.map((s, i) => `<span class="${i === cur ? 'on' : (i < cur || L.step === 'done' ? 'past' : '')}">${i + 1}. ${s[1]}</span>`).join('')}</div>`;
+}
+function learnLesson() {
+  const les = L.lesson;
+  let h = `<div class="bar"><button class="chip" data-act="home">&larr; All lessons</button><span class="spacer"></span><span class="sub">${esc(les.title)} &middot; ${les.span}</span></div>${stepsBar()}`;
+  if (L.step === 'read') {
+    const ev = LEV[les.ids[L.idx]];
+    h += `<p class="sub">${esc(les.big)}</p><div class="strip">${les.ids.map((id, i) => `<span class="${i === L.idx ? 'cur' : ''}">${esc(LEV[id].d)}</span>`).join('')}</div>
+      <div class="study"><div class="yearbig">${esc(ev.d)}</div><h2>${esc(ev.n)}</h2>
+      <div class="lab">What happened</div><p>${esc(ev.what)}</p>
+      <div class="lab">Why it matters</div><p>${esc(ev.why)}</p>
+      <div class="hook"><div class="lab">Memory hook</div><p>${esc(ev.hook)}</p></div>
+      ${ev.note ? `<p class="note">${esc(ev.note)}</p>` : ''}</div>
+      <div class="row"><button class="btn ghost" data-act="prev" ${L.idx === 0 ? 'disabled' : ''}>Back</button><button class="btn" data-act="next">${L.idx === les.ids.length - 1 ? 'Test me' : 'Next event'}</button></div>`;
+  } else if (L.step === 'pick' || L.step === 'type') h += qView();
+  else if (L.step === 'order') h += orderView();
+  else {
+    const sorted = les.ids.map(id => LEV[id]).sort((a, b) => a.y - b.y);
+    const nextL = LESSONS.filter(l => l.track === les.track)[LESSONS.filter(l => l.track === les.track).indexOf(les) + 1];
+    h += `<div class="panel"><h2>Lesson done</h2><p class="sub">Say these out loud once, earliest first.</p><ul class="key">${sorted.map(e => `<li><span class="yr">${esc(e.d)}</span><span>${esc(e.n)}</span></li>`).join('')}</ul>
+      <div class="row">${nextL ? `<button class="btn" data-act="start" data-id="${nextL.id}">Next lesson: ${esc(nextL.title)}</button>` : ''}<button class="btn ghost" data-act="home">All lessons</button></div></div>`;
+  }
+  view.innerHTML = h;
+}
+function qView() {
+  const item = L.queue[0], ev = LEV[item.id], left = L.queue.length;
+  let h = `<div class="meta"><span>${left} to go${item.tries ? ' (second try)' : ''}</span><span>${L.phase === 'review' ? 'Review' : (item.mode === 'pick' ? 'Pick the year' : 'Type the year')}</span></div>`;
+  if (item.mode === 'pick') {
+    if (!item.opts) item.opts = mcOptions(ev);
+    h += `<div class="q">When did "${esc(ev.n)}" happen?</div><div class="opts">${item.opts.map((o, k) => `<button class="opt ${L.fb ? (o === ev.d ? 'right' : (k === L.picked ? 'wrong' : '')) : ''}" data-act="opt" data-k="${k}" ${L.fb ? 'disabled' : ''}>${esc(o)}</button>`).join('')}</div>`;
+  } else {
+    const nb = neighbors(ev);
+    h += `<div class="q">What year: "${esc(ev.n)}"?</div>
+      <input class="yr-in" id="typeIn" inputmode="numeric" autocomplete="off" placeholder="Year" aria-label="Year" ${L.fb ? 'disabled value="' + (L.fb.typed || '') + '"' : ''}>
+      ${L.fb ? '' : `<div class="row"><button class="btn" data-act="typecheck">Check</button><button class="btn ghost" data-act="hint">Hint</button></div>${L.hint ? `<p class="sub" style="margin-top:12px">It came ${nb.prev ? 'after ' + esc(nb.prev.n) + ' (' + esc(nb.prev.d) + ')' : ''}${nb.prev && nb.next ? ' and ' : ''}${nb.next ? 'before ' + esc(nb.next.n) + ' (' + esc(nb.next.d) + ')' : ''}.</p>` : ''}`}`;
+  }
+  if (L.fb) {
+    h += `<p class="fb">${L.fb.ok ? '<b class="ok">Right.</b>' : '<b class="no">Not quite.</b>'} ${esc(ev.d)}: ${esc(ev.n)}.</p><div class="hook"><div class="lab">Memory hook</div><p>${esc(ev.hook)}</p></div><div class="row" style="margin-top:14px"><button class="btn" id="qcont" data-act="qcont">Continue</button></div>`;
+  }
+  return h;
+}
+function orderView() {
+  const evs = L.lesson.ids.map(id => LEV[id]), total = evs.length;
+  const sorted = evs.slice().sort((a, b) => a.y - b.y);
+  const allRight = L.checked && L.placed.every((id, i) => LEV[id].y === sorted[i].y);
+  let h = `<div class="q">Put them in order, earliest first.</div><div class="pool">${L.pool.map(id => `<button class="ev" data-act="place" data-id="${id}">${esc(LEV[id].n)}</button>`).join('') || '<span class="sub">All placed.</span>'}</div><ol class="order">`;
+  for (let i = 0; i < total; i++) {
+    const id = L.placed[i];
+    if (id) { const e = LEV[id]; h += `<li class="filled ${L.checked ? (e.y === sorted[i].y ? 'ok' : 'no') : ''}"><button data-act="unplace" data-i="${i}">${esc(e.n)}</button>${L.checked ? `<span class="yr">${esc(e.d)}</span>` : ''}</li>`; }
+    else h += '<li></li>';
+  }
+  h += '</ol>';
+  if (L.checked) h += `<p class="fb"><b class="${allRight ? 'ok' : 'no'}">${allRight ? 'Correct order.' : 'Not quite. Correct order:'}</b></p><ul class="key">${sorted.map(e => `<li><span class="yr">${esc(e.d)}</span><span>${esc(e.n)}</span></li>`).join('')}</ul>`;
+  h += `<div class="row">${L.checked ? (allRight ? '<button class="btn" data-act="finish">Finish lesson</button>' : '<button class="btn" data-act="ordreset">Try again</button>') : `<button class="btn" data-act="ordcheck" ${L.placed.length === total ? '' : 'disabled'}>Check order</button>`}</div>`;
+  return h;
+}
+function learnReview() {
+  if (L.step === 'rdone') {
+    const weak = LV.seen.filter(id => LEV[id] && lvl(id) < 3).length;
+    view.innerHTML = `<div class="panel done"><p class="big">${L.rv.ok} / ${L.rv.n}</p><p class="sub">right on the first try.</p><p>${weak} dates still need work.</p>
+      <div class="row">${weak ? '<button class="btn" data-act="review">Review again</button>' : ''}<button class="btn ghost" data-act="home">All lessons</button></div></div>`;
+    return;
+  }
+  view.innerHTML = `<div class="bar"><button class="chip" data-act="home">&larr; All lessons</button></div>${qView()}`;
+}
+view.addEventListener('click', e => {
+  if (tab !== 'learn') return;
+  const t = e.target.closest('[data-act]'); if (!t) return;
+  const a = t.dataset.act;
+  if (a === 'track') { L.track = Number(t.dataset.v); renderLearn(); }
+  else if (a === 'start') startLesson(t.dataset.id);
+  else if (a === 'review') startReview();
+  else if (a === 'home') { L.phase = 'home'; renderLearn(); }
+  else if (a === 'cheat') { L.cheat = !L.cheat; renderLearn(); }
+  else if (a === 'prev') { L.idx = Math.max(0, L.idx - 1); renderLearn(); }
+  else if (a === 'next') { if (L.idx < L.lesson.ids.length - 1) { L.idx++; renderLearn(); } else { beginStage('pick'); renderLearn(); } }
+  else if (a === 'opt' && !L.fb) { const item = L.queue[0]; L.picked = Number(t.dataset.k); L.fb = { ok: item.opts[L.picked] === LEV[item.id].d }; renderLearn(); }
+  else if (a === 'typecheck') typeCheck();
+  else if (a === 'hint') { L.hint = true; renderLearn(); }
+  else if (a === 'qcont') qContinue();
+  else if (a === 'place') { L.pool = L.pool.filter(x => x !== t.dataset.id); L.placed.push(t.dataset.id); renderLearn(); }
+  else if (a === 'unplace' && !L.checked) { L.pool.push(L.placed.splice(Number(t.dataset.i), 1)[0]); renderLearn(); }
+  else if (a === 'ordcheck') { L.checked = true; renderLearn(); }
+  else if (a === 'ordreset') { L.pool = shuffle(L.lesson.ids); L.placed = []; L.checked = false; renderLearn(); }
+  else if (a === 'finish') { if (!LV.done.includes(L.lesson.id)) LV.done.push(L.lesson.id); saveLV(); L.step = 'done'; renderLearn(); }
+});
+function typeCheck() {
+  const inp = document.getElementById('typeIn'); if (!inp) return;
+  const v = parseInt(inp.value.replace(/\D/g, ''), 10); if (isNaN(v)) return;
+  const item = L.queue[0], ev = LEV[item.id], ok = ev.accept.includes(v);
+  L.fb = { ok, typed: v };
+  if (item.tries === 0) { LV.ev[item.id] = ok ? Math.min(3, lvl(item.id) + 1) : Math.max(0, lvl(item.id) - 1); saveLV(); }
+  renderLearn();
+}
+view.addEventListener('keydown', e => { if (tab === 'learn' && e.key === 'Enter' && e.target.id === 'typeIn') { e.preventDefault(); typeCheck(); } });
+
+/* ---------- keyboard for flashcards ---------- */
+document.addEventListener('keydown', e => {
+  if (tab !== 'cards' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === ' ' && FC.pos < FC.deck.length && e.target === document.body) { e.preventDefault(); FC.flipped = !FC.flipped; renderCards(); }
+  else if (e.key === 'ArrowRight' && FC.pos < FC.deck.length) fcAdvance();
+  else if (e.key === 'ArrowLeft' && FC.pos > 0) { FC.pos--; FC.flipped = false; renderCards(); }
+});
+
+/* ---------- boot ---------- */
+(function boot() {
+  const h = location.hash.slice(1);
+  if (TABS.some(t => t[0] === h)) tab = h;
+  drawTabs(); render();
+})();
+</script>
+</body>
+</html>
